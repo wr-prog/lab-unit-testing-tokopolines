@@ -1,33 +1,45 @@
-# Lab Unit Testing — TokoPolines
+# TokoPolines — Website & Unit Testing
 
 Praktikum Pertemuan 10 · Mata Kuliah Uji Produk IT
 Cezar Nareswara R — 43324205
 
-Repo ini berisi dua pendamping praktikum Unit Testing untuk studi kasus marketplace **TokoPolines**:
+Repo ini berisi website **TokoPolines** (objek yang diuji) beserta notebook
+unit test-nya untuk studi kasus marketplace TokoPolines.
 
-## 1. Web Lab (`index.html`)
+## 1. Website TokoPolines (`index.html`)
 
-Halaman web interaktif yang mengimplementasikan empat fungsi bisnis TokoPolines
-(`validasi_jumlah`, `hitung_subtotal`, `hitung_diskon`, `validasi_checkout`) dan
-menjalankan pengujian langsung di browser dengan empat teknik desain test case:
+Marketplace simulasi yang benar-benar berjalan di browser (satu file HTML,
+tanpa dependensi server; data tersimpan di localStorage):
 
-1. **Equivalence Partitioning** — lima partisi input `validasi_jumlah` beserta wakilnya.
-2. **Boundary Value Analysis** — nilai batas 0, 1, 2, 9, 10, 11 dan batas stok 5/6.
-3. **Decision Table** — delapan kombinasi syarat voucher POLINES10 (login × subtotal × voucher).
-4. **State Transition** — mesin status pesanan (Menunggu Pembayaran → Diproses → Dikirim → Selesai,
-   Batalkan hanya dari Menunggu Pembayaran), lengkap dengan pengujian transisi yang ditolak.
+- **Katalog** — 8 produk dengan pencarian dan filter kategori.
+- **Login** — akun simulasi `mahasiswa@tokopolines.test` / `Polines123!` (REQ-01).
+- **Keranjang** — jumlah pembelian divalidasi: bilangan bulat 1–10 dan tidak
+  melebihi stok (REQ-02); subtotal = harga × jumlah (REQ-03).
+- **Voucher POLINES10** — diskon 10% hanya bila sudah login, subtotal
+  ≥ Rp100.000, dan kode valid (REQ-04).
+- **Checkout** — ditolak bila keranjang kosong (REQ-05).
+- **Pesanan** — status bergerak Menunggu Pembayaran → Diproses → Dikirim →
+  Selesai; pembatalan hanya dari Menunggu Pembayaran dan transisi yang tidak
+  sesuai ditolak (REQ-06).
+- **Panduan** — daftar aturan bisnis serta mode bug (batas jumlah menjadi 11)
+  untuk latihan menemukan defect.
 
-Dilengkapi **runner 28 test utama + 6 test tambahan** (semua PASS) serta demonstrasi
-**defect BUG-01** (`validasi_jumlah_bug` menerima 11 unit → FAIL) dan regression test
-setelah perbaikan (≤ 11 menjadi ≤ 10 → PASS).
+Fungsi bisnis di dalam website (`validasiJumlah`, `hitungSubtotal`,
+`hitungDiskon`, `validasiCheckout`, `statusBerikut`) menerapkan aturan yang
+sama persis dengan fungsi Python pada notebook, sehingga perilaku website dan
+hasil unit test saling setara.
 
 Buka `index.html` langsung di browser, atau aktifkan GitHub Pages dari repo ini.
 
 ## 2. Notebook Python (`Unit_Testing_TokoPolines.ipynb`)
 
-Notebook Google Colab berisi kode persis modul: SEL 1 fungsi bisnis, SEL 1B percobaan
-manual, SEL 2 suite utama 28 test, SEL 3 demonstrasi defect, SEL 4 pembuktian perbaikan,
+Notebook Google Colab berisi kode persis modul: SEL 1 fungsi bisnis, SEL 1B
+percobaan manual, SEL 2 suite utama 28 test, SEL 3 demonstrasi defect
+(`validasi_jumlah_bug` menerima 11 unit → FAIL), SEL 4 pembuktian perbaikan,
 SEL 5 enam test tambahan — lengkap dengan output eksekusi aktual
 (28 + 6 test PASS; demonstrasi defect 1 FAIL sesuai desain).
 
-Hasil web (JavaScript) dan hasil notebook (Python `unittest`) setara satu sama lain.
+Perancangan kasus ujinya memakai empat teknik: **Equivalence Partitioning**
+dan **Boundary Value Analysis** untuk aturan jumlah (REQ-02), **Decision
+Table** untuk kombinasi syarat voucher (REQ-04), dan **State Transition**
+untuk status pesanan (REQ-06).
