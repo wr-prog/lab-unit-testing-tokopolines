@@ -250,8 +250,7 @@ if (typeof module !== 'undefined') {
                      hitungDiskon, validasiCheckout, TRANSISI, statusBerikut };
 }
 
-/* ================= Antarmuka toko (hanya berjalan di browser) ================= */
-if (typeof document !== 'undefined') {
+/* ================= Antarmuka toko ================= */
 
 const PRODUK = [
   { id: 1, nama: 'Flashdisk 32 GB', kategori: 'Elektronik', harga: 50000,  stok: 40,  ikon: '💾' },
@@ -479,9 +478,10 @@ function resetData() {
   info('Seluruh data simulasi telah direset.');
 }
 
-S = muat();
-segarkanHeader();
-tampil('belanja');
+if (typeof document !== 'undefined') {
+  S = muat();
+  segarkanHeader();
+  tampil('belanja');
 }
 </script>
 </body>
