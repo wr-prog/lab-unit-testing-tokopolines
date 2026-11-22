@@ -5,200 +5,211 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lab Unit Testing TokoPolines — EP, BVA, Decision Table, State Transition</title>
 <style>
-  :root{
-    --bg:#0f172a; --panel:#1e293b; --panel2:#16213a; --line:#334155;
-    --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8; --accent2:#fbbf24;
-    --ok:#22c55e; --bad:#ef4444; --warn:#f59e0b;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
-  header{background:linear-gradient(135deg,#0ea5e9,#1d4ed8);padding:34px 20px 26px;text-align:center}
-  header h1{margin:0 0 6px;font-size:1.9rem}
-  header p{margin:2px 0;color:#e0f2fe}
-  nav{position:sticky;top:0;background:#0b1220ee;backdrop-filter:blur(6px);padding:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;z-index:10;border-bottom:1px solid var(--line)}
-  nav a{color:var(--text);text-decoration:none;background:var(--panel);padding:6px 14px;border-radius:999px;font-size:.9rem;border:1px solid var(--line)}
-  nav a:hover{border-color:var(--accent);color:var(--accent)}
-  main{max-width:1080px;margin:0 auto;padding:24px 16px 60px}
-  section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:22px}
-  h2{margin-top:0;color:var(--accent);font-size:1.3rem}
-  h3{color:var(--accent2);margin-bottom:6px}
-  p.desc{color:var(--muted)}
-  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.92rem}
-  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
-  th{background:var(--panel2);color:var(--accent)}
-  code,pre{font-family:Consolas,'Courier New',monospace}
-  pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto;font-size:.85rem;color:#a5f3fc}
-  .btn{background:var(--accent);color:#082f49;border:none;padding:9px 18px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.92rem}
-  .btn:hover{filter:brightness(1.1)}
-  .btn.warn{background:var(--warn);color:#451a03}
-  .btn.bad{background:var(--bad);color:#fff}
-  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
-  .badge{display:inline-block;padding:1px 10px;border-radius:999px;font-weight:700;font-size:.8rem}
-  .pass{background:#14532d;color:#86efac}
-  .fail{background:#7f1d1d;color:#fca5a5}
-  .belum{background:#334155;color:var(--muted)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
-  .card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
-  .card h4{margin:0 0 6px;color:var(--accent)}
-  .card p{margin:4px 0;color:var(--muted);font-size:.9rem}
-  input,select{background:#0b1220;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:.92rem;width:100%}
-  label{font-size:.85rem;color:var(--muted);display:block;margin:8px 0 3px}
-  .hasil{margin-top:10px;background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-family:Consolas,monospace;font-size:.9rem;min-height:38px}
-  .summary{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
-  .chip{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-weight:700}
-  .chip b{color:var(--accent)}
-  .statebox{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
-  .state{padding:8px 14px;border-radius:10px;border:2px solid var(--line);background:var(--panel2);font-weight:600;font-size:.9rem}
-  .state.aktif{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 3px #38bdf833}
-  .state.final{border-color:var(--ok);color:#86efac}
-  .arrow{color:var(--muted)}
-  #logStatus{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:12px;font-family:Consolas,monospace;font-size:.85rem;max-height:220px;overflow-y:auto;white-space:pre-wrap}
-  footer{text-align:center;color:var(--muted);padding:26px;font-size:.88rem}
-  .rowfail td{background:#7f1d1d33}
-  .rowpass td{background:#14532d22}
+:root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#172338;background:#f4f6fa}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6fa}
+header{background:#123466;color:#fff;padding:17px max(22px,calc((100vw - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:25px;margin:0}
+header small{color:#c7d9f5}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+button,input,select{font:inherit}
+button{border:0;border-radius:9px;padding:10px 14px;cursor:pointer;background:#1766ca;color:#fff;font-weight:600}
+button:hover{filter:brightness(.94)}
+button.secondary{background:#e6edf8;color:#123466}
+button.danger{background:#c43c3c}
+button:disabled{opacity:.55;cursor:not-allowed}
+a.btnlink{text-decoration:none}
+main{max-width:1180px;margin:24px auto;padding:0 18px}
+.hero{background:linear-gradient(110deg,#164784,#1e70bc);color:#fff;padding:26px;border-radius:16px;margin-bottom:18px}
+.hero h2{margin:0 0 8px;font-size:22px}
+.hero p{margin:0;line-height:1.6;max-width:820px}
+.hero .tags{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.hero .tag{background:#ffffff26;color:#fff}
+.panel{background:#fff;border:1px solid #e1e6ee;border-radius:13px;padding:20px;margin:16px 0;box-shadow:0 3px 12px #142b4810}
+.panel h2{margin-top:0;color:#123466;font-size:20px}
+.panel h3{color:#123466}
+.desc{color:#43536b;line-height:1.65;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:#fbfcfe;border:1px solid #e1e6ee;border-radius:13px;padding:16px}
+.card h4{margin:0 0 4px;color:#0b4b9d;font-size:15px}
+label{display:block;font-weight:600;margin:10px 0 5px;font-size:13.5px;color:#43536b}
+input,select{border:1px solid #bdc9d8;border-radius:8px;padding:10px;max-width:100%;width:100%;background:#fff}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;border-bottom:1px solid #e2e7ef;padding:11px 8px;vertical-align:top;font-size:14.5px}
+th{background:#f0f4fa;color:#123466}
+.tablewrap{overflow:auto}
+.tag{display:inline-block;background:#edf2fb;color:#174c8d;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.badge{display:inline-block;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700}
+.badge.pass{background:#e8f7ee;color:#17663c}
+.badge.fail{background:#fff0ef;color:#b3352c}
+.badge.belum{background:#eef1f6;color:#637189}
+tr.rowpass td{background:#f2fbf5}
+tr.rowfail td{background:#fff5f4}
+.hasil{margin-top:12px;background:#f8fafc;border:1px solid #e1e6ee;border-radius:9px;padding:10px 12px;font-family:Consolas,'Courier New',monospace;font-size:13.5px;min-height:40px;line-height:1.55}
+.notice{background:#edf6ff;border-left:4px solid #1766ca;padding:13px;border-radius:6px;margin:12px 0;line-height:1.6}
+.summary{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.chip{background:#f0f4fa;border:1px solid #dbe4f0;border-radius:10px;padding:8px 16px;font-weight:700;color:#123466}
+.chip b{color:#1766ca}
+.statebox{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.state{padding:7px 14px;border-radius:20px;border:2px solid #d8e0eb;background:#fff;font-weight:700;font-size:13px;color:#43536b}
+.state.aktif{border-color:#1766ca;background:#edf6ff;color:#123466}
+.state.final{border-color:#24945a;background:#e8f7ee;color:#17663c}
+.arrow{color:#8fa1b8;font-weight:700}
+#logStatus{background:#f8fafc;border:1px solid #e1e6ee;border-radius:9px;padding:12px;font-family:Consolas,'Courier New',monospace;font-size:13px;max-height:220px;overflow-y:auto;white-space:pre-wrap;line-height:1.55}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+pre{background:#0f2440;color:#d7e7fb;border-radius:10px;padding:15px;overflow-x:auto;font-size:13.5px;line-height:1.6}
+.footer{text-align:center;color:#67768d;font-size:12.5px;padding:28px;line-height:1.7}
+code{font-family:Consolas,'Courier New',monospace;background:#eef2f8;border-radius:5px;padding:1px 5px;font-size:.92em}
+pre code{background:transparent;padding:0}
+@media(max-width:650px){header{padding:16px}th,td{font-size:13px;padding:8px 5px}}
 </style>
 </head>
 <body>
 <header>
-  <h1>Lab Unit Testing — TokoPolines</h1>
-  <p>Praktikum Pertemuan 10 · Mata Kuliah Uji Produk IT</p>
-  <p>Equivalence Partitioning · Boundary Value Analysis · Decision Table · State Transition</p>
-  <p style="font-size:.9rem">Cezar Nareswara R — 43324205</p>
+  <div>
+    <h1>TokoPolines — Lab Unit Testing</h1>
+    <small>Praktikum Pertemuan 10 · Mata Kuliah Uji Produk IT · Cezar Nareswara R — 43324205</small>
+  </div>
+  <nav>
+    <a class="btnlink" href="#ep"><button class="secondary">Equivalence Partitioning</button></a>
+    <a class="btnlink" href="#bva"><button class="secondary">Boundary Value</button></a>
+    <a class="btnlink" href="#dt"><button class="secondary">Decision Table</button></a>
+    <a class="btnlink" href="#st"><button class="secondary">State Transition</button></a>
+    <a class="btnlink" href="#runner"><button>Runner 34 Test</button></a>
+  </nav>
 </header>
-<nav>
-  <a href="#fungsi">Fungsi Bisnis</a>
-  <a href="#ep">1 · Equivalence Partitioning</a>
-  <a href="#bva">2 · Boundary Value Analysis</a>
-  <a href="#dt">3 · Decision Table</a>
-  <a href="#st">4 · State Transition</a>
-  <a href="#runner">Runner 34 Test</a>
-  <a href="#defect">Defect &amp; Regression</a>
-</nav>
 <main>
-
-<section id="fungsi">
-  <h2>Fungsi Bisnis yang Diuji (System Under Test)</h2>
-  <p class="desc">Empat fungsi logika bisnis TokoPolines diimplementasikan di halaman ini (JavaScript, setara fungsi Python pada modul) dan menjadi objek seluruh pengujian di bawah. Aturan acuan: REQ-02 jumlah integer 1–10 dan tidak melebihi stok; REQ-03 subtotal = harga × jumlah, nilai negatif memicu ValueError; REQ-04 voucher POLINES10 memberi diskon 10% hanya bila login, subtotal ≥ Rp100.000, dan kode valid; REQ-05 checkout ditolak bila keranjang kosong.</p>
-  <pre>function validasi_jumlah(jumlah, stok)   // REQ-02
-function hitung_subtotal(harga, jumlah)  // REQ-03, melempar ValueError
-function hitung_diskon(subtotal, login, voucher) // REQ-04
-function validasi_checkout(keranjang)    // REQ-05</pre>
-  <div class="grid">
-    <div class="card">
-      <h4>validasi_jumlah(jumlah, stok)</h4>
-      <label>Jumlah (coba: 5, 0, 11, 2.5, True)</label><input id="pj-jumlah" value="5">
-      <label>Stok</label><input id="pj-stok" value="15">
-      <p></p><button class="btn" onclick="cobaJumlah()">Uji</button>
-      <div class="hasil" id="pj-hasil">—</div>
-    </div>
-    <div class="card">
-      <h4>hitung_subtotal(harga, jumlah)</h4>
-      <label>Harga</label><input id="ps-harga" value="50000">
-      <label>Jumlah</label><input id="ps-jumlah" value="5">
-      <p></p><button class="btn" onclick="cobaSubtotal()">Uji</button>
-      <div class="hasil" id="ps-hasil">—</div>
-    </div>
-    <div class="card">
-      <h4>hitung_diskon(subtotal, login, voucher)</h4>
-      <label>Subtotal</label><input id="pd-subtotal" value="250000">
-      <label>Login</label><select id="pd-login"><option value="true">True (sudah login)</option><option value="false">False (belum login)</option></select>
-      <label>Kode voucher</label><input id="pd-voucher" value="POLINES10">
-      <p></p><button class="btn" onclick="cobaDiskon()">Uji</button>
-      <div class="hasil" id="pd-hasil">—</div>
-    </div>
-    <div class="card">
-      <h4>validasi_checkout(keranjang)</h4>
-      <label>Isi keranjang, pisahkan koma (kosongkan = keranjang kosong; tulis None untuk None)</label><input id="pc-isi" value="Laptop, Mouse">
-      <p></p><button class="btn" onclick="cobaCheckout()">Uji</button>
-      <div class="hasil" id="pc-hasil">—</div>
+  <div class="hero">
+    <h2>Empat Teknik Desain Test Case, Satu Lab</h2>
+    <p>Lab ini menguji empat fungsi bisnis TokoPolines (<i>validasi_jumlah</i>, <i>hitung_subtotal</i>, <i>hitung_diskon</i>, <i>validasi_checkout</i>) memakai empat teknik perancangan kasus uji: Equivalence Partitioning, Boundary Value Analysis, Decision Table, dan State Transition. Semua pengujian dijalankan langsung di halaman ini dan hasilnya setara dengan eksekusi Python <i>unittest</i> pada notebook pendamping.</p>
+    <div class="tags">
+      <span class="tag">28 test utama</span>
+      <span class="tag">6 test tambahan</span>
+      <span class="tag">1 defect BUG-01</span>
+      <span class="tag">Regression test</span>
     </div>
   </div>
-</section>
 
-<section id="ep">
-  <h2>1 · Equivalence Partitioning (EP)</h2>
-  <p class="desc">EP membagi ruang input menjadi kelompok (partisi) yang diharapkan berperilaku sama, lalu cukup menguji satu wakil dari tiap kelompok. Untuk <b>validasi_jumlah</b> dengan stok 15 terdapat lima partisi: satu partisi valid dan empat partisi tidak valid. Menjalankan kelima wakil di bawah membuktikan kelima kelompok berperilaku sesuai spesifikasi tanpa harus menguji semua angka.</p>
-  <table>
-    <tr><th>Partisi</th><th>Keterangan</th><th>Wakil</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
-    <tbody id="ep-body"></tbody>
-  </table>
-  <button class="btn" onclick="runEP()">Jalankan Pengujian EP</button>
-  <span id="ep-ringkas" style="margin-left:10px"></span>
-</section>
+  <section class="panel" id="fungsi">
+    <h2>Fungsi Bisnis yang Diuji</h2>
+    <p class="desc">Aturan acuan: <b>REQ-02</b> jumlah integer 1–10 dan tidak melebihi stok · <b>REQ-03</b> subtotal = harga × jumlah, nilai negatif memicu ValueError · <b>REQ-04</b> voucher POLINES10 memberi diskon 10% hanya bila login, subtotal ≥ Rp100.000, dan kode valid · <b>REQ-05</b> checkout ditolak bila keranjang kosong. Coba sendiri keempat fungsi di bawah ini.</p>
+    <pre><code>validasi_jumlah(jumlah, stok)              // REQ-02
+hitung_subtotal(harga, jumlah)             // REQ-03, melempar ValueError
+hitung_diskon(subtotal, login, voucher)    // REQ-04
+validasi_checkout(keranjang)               // REQ-05</code></pre>
+    <div class="grid">
+      <div class="card">
+        <h4>validasi_jumlah(jumlah, stok)</h4>
+        <label>Jumlah (coba: 5, 0, 11, 2.5, True)</label><input id="pj-jumlah" value="5">
+        <label>Stok</label><input id="pj-stok" value="15">
+        <div class="actions"><button onclick="cobaJumlah()">Uji Fungsi</button></div>
+        <div class="hasil" id="pj-hasil">—</div>
+      </div>
+      <div class="card">
+        <h4>hitung_subtotal(harga, jumlah)</h4>
+        <label>Harga</label><input id="ps-harga" value="50000">
+        <label>Jumlah</label><input id="ps-jumlah" value="5">
+        <div class="actions"><button onclick="cobaSubtotal()">Uji Fungsi</button></div>
+        <div class="hasil" id="ps-hasil">—</div>
+      </div>
+      <div class="card">
+        <h4>hitung_diskon(subtotal, login, voucher)</h4>
+        <label>Subtotal</label><input id="pd-subtotal" value="250000">
+        <label>Login</label><select id="pd-login"><option value="true">True (sudah login)</option><option value="false">False (belum login)</option></select>
+        <label>Kode voucher</label><input id="pd-voucher" value="POLINES10">
+        <div class="actions"><button onclick="cobaDiskon()">Uji Fungsi</button></div>
+        <div class="hasil" id="pd-hasil">—</div>
+      </div>
+      <div class="card">
+        <h4>validasi_checkout(keranjang)</h4>
+        <label>Isi keranjang, pisahkan koma (kosongkan = keranjang kosong; tulis None untuk None)</label><input id="pc-isi" value="Laptop, Mouse">
+        <div class="actions"><button onclick="cobaCheckout()">Uji Fungsi</button></div>
+        <div class="hasil" id="pc-hasil">—</div>
+      </div>
+    </div>
+  </section>
 
-<section id="bva">
-  <h2>2 · Boundary Value Analysis (BVA)</h2>
-  <p class="desc">BVA menguji tepat di perbatasan rentang, karena kesalahan paling sering bersembunyi di batas (kesalahan <i>off-by-one</i>, misalnya menulis ≤ 11 padahal seharusnya ≤ 10). Rentang jumlah yang sah adalah 1–10, sehingga nilai yang diuji adalah 0, 1, 2 dan 9, 10, 11. Batas stok juga diuji: jumlah 5 dengan stok 5 (tepat habis) dan jumlah 6 dengan stok 5 (satu di atas stok).</p>
-  <table>
-    <tr><th>Jumlah</th><th>Stok</th><th>Posisi terhadap batas</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
-    <tbody id="bva-body"></tbody>
-  </table>
-  <button class="btn" onclick="runBVA()">Jalankan Pengujian BVA</button>
-  <span id="bva-ringkas" style="margin-left:10px"></span>
-</section>
+  <section class="panel" id="ep">
+    <h2>1 · Equivalence Partitioning</h2>
+    <p class="desc">Equivalence Partitioning membagi ruang input menjadi kelompok (partisi) yang diharapkan berperilaku sama, lalu cukup menguji satu wakil dari tiap kelompok. Untuk <code>validasi_jumlah</code> dengan stok 15 terdapat lima partisi: satu partisi valid dan empat partisi tidak valid.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Partisi</th><th>Wakil</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+      <tbody id="ep-body"></tbody>
+    </table></div>
+    <div class="actions"><button onclick="runEP()">Jalankan Pengujian EP</button><span id="ep-ringkas" style="align-self:center;font-weight:600;color:#43536b"></span></div>
+  </section>
 
-<section id="dt">
-  <h2>3 · Decision Table — Voucher POLINES10</h2>
-  <p class="desc">Diskon ditentukan oleh kombinasi tiga syarat: <b>L</b> = sudah login, <b>S</b> = subtotal ≥ Rp100.000, <b>V</b> = voucher valid (POLINES10). Hanya satu dari delapan kombinasi yang menghasilkan diskon 10%; tujuh kombinasi lain menghasilkan 0. Pada tabel yang dapat dijalankan ini, S = Ya diwakili subtotal Rp250.000 dan S = Tidak diwakili subtotal Rp50.000; V = Tidak diwakili kode SALAH10.</p>
-  <table>
-    <tr><th>L (login)</th><th>S (subtotal ≥ 100rb)</th><th>V (voucher valid)</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
-    <tbody id="dt-body"></tbody>
-  </table>
-  <button class="btn" onclick="runDT()">Jalankan Decision Table</button>
-  <span id="dt-ringkas" style="margin-left:10px"></span>
-</section>
+  <section class="panel" id="bva">
+    <h2>2 · Boundary Value Analysis</h2>
+    <p class="desc">Boundary Value Analysis menguji tepat di perbatasan rentang, karena kesalahan paling sering bersembunyi di batas (kesalahan <i>off-by-one</i>, misalnya menulis ≤ 11 padahal seharusnya ≤ 10). Rentang jumlah yang sah adalah 1–10, sehingga nilai yang diuji adalah 0, 1, 2 dan 9, 10, 11. Batas stok juga diuji: jumlah 5 dengan stok 5 (tepat habis) dan jumlah 6 dengan stok 5 (satu di atas stok).</p>
+    <div class="tablewrap"><table>
+      <tr><th>Jumlah</th><th>Stok</th><th>Posisi terhadap batas</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+      <tbody id="bva-body"></tbody>
+    </table></div>
+    <div class="actions"><button onclick="runBVA()">Jalankan Pengujian BVA</button><span id="bva-ringkas" style="align-self:center;font-weight:600;color:#43536b"></span></div>
+  </section>
 
-<section id="st">
-  <h2>4 · State Transition — Status Pesanan</h2>
-  <p class="desc">Status pesanan adalah mesin status: Menunggu Pembayaran → Diproses → Dikirim → Selesai, dengan cabang Batalkan yang hanya sah dari Menunggu Pembayaran. Transisi di luar jalur tersebut harus ditolak. Coba sendiri: tekan tombol aksi dan perhatikan transisi mana yang diterima dan mana yang ditolak, atau jalankan pengujian seluruh transisi sekaligus.</p>
-  <div class="statebox" id="st-visual"></div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
-    <button class="btn" onclick="aksiStatus('Bayar')">Bayar</button>
-    <button class="btn" onclick="aksiStatus('Kirim')">Kirim</button>
-    <button class="btn" onclick="aksiStatus('Terima')">Terima</button>
-    <button class="btn warn" onclick="aksiStatus('Batalkan')">Batalkan</button>
-    <button class="btn ghost" onclick="resetStatus()">Reset Pesanan</button>
-    <button class="btn" onclick="runST()">Uji Semua Transisi</button>
+  <section class="panel" id="dt">
+    <h2>3 · Decision Table — Voucher POLINES10</h2>
+    <p class="desc">Diskon ditentukan oleh kombinasi tiga syarat: <b>L</b> = sudah login, <b>S</b> = subtotal ≥ Rp100.000, <b>V</b> = voucher valid (POLINES10). Hanya satu dari delapan kombinasi yang menghasilkan diskon 10%; tujuh kombinasi lain menghasilkan 0. Pada tabel ini S = Ya diwakili subtotal Rp250.000 dan S = Tidak diwakili subtotal Rp50.000; V = Tidak diwakili kode SALAH10.</p>
+    <div class="tablewrap"><table>
+      <tr><th>L (login)</th><th>S (subtotal ≥ 100rb)</th><th>V (voucher valid)</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+      <tbody id="dt-body"></tbody>
+    </table></div>
+    <div class="actions"><button onclick="runDT()">Jalankan Decision Table</button><span id="dt-ringkas" style="align-self:center;font-weight:600;color:#43536b"></span></div>
+  </section>
+
+  <section class="panel" id="st">
+    <h2>4 · State Transition — Status Pesanan</h2>
+    <p class="desc">Status pesanan adalah mesin status: Menunggu Pembayaran → Diproses → Dikirim → Selesai, dengan cabang Batalkan yang hanya sah dari Menunggu Pembayaran. Transisi di luar jalur tersebut harus ditolak. Coba sendiri dengan tombol aksi, atau jalankan pengujian seluruh transisi sekaligus.</p>
+    <div class="statebox" id="st-visual"></div>
+    <div class="actions">
+      <button onclick="aksiStatus('Bayar')">Bayar</button>
+      <button onclick="aksiStatus('Kirim')">Kirim</button>
+      <button onclick="aksiStatus('Terima')">Terima</button>
+      <button class="danger" onclick="aksiStatus('Batalkan')">Batalkan</button>
+      <button class="secondary" onclick="resetStatus()">Reset Pesanan</button>
+      <button onclick="runST()">Uji Semua Transisi</button>
+    </div>
+    <div id="logStatus">Status awal: Menunggu Pembayaran.</div>
+    <div class="tablewrap"><table>
+      <tr><th>Dari status</th><th>Aksi</th><th>Ke status</th><th>Keterangan</th><th>Hasil uji</th></tr>
+      <tbody id="st-body"></tbody>
+    </table></div>
+  </section>
+
+  <section class="panel" id="runner">
+    <h2>Runner — 28 Test Utama + 6 Test Tambahan</h2>
+    <p class="desc">Seluruh test case praktikum dijalankan terhadap fungsi di halaman ini. Hasilnya setara dengan eksekusi Python <i>unittest</i> pada notebook pendamping: 28 test utama (TC-01 s.d. TC-28) dan 6 test tambahan (TB-01 s.d. TB-06).</p>
+    <div class="summary">
+      <span class="chip">Total: <b id="sum-total">–</b></span>
+      <span class="chip">PASS: <b id="sum-pass">–</b></span>
+      <span class="chip">FAIL: <b id="sum-fail">–</b></span>
+      <span class="chip">ERROR: <b id="sum-error">–</b></span>
+    </div>
+    <div class="actions"><button onclick="runSuite()">Jalankan Semua Test</button></div>
+    <div class="tablewrap"><table>
+      <tr><th>ID</th><th>REQ</th><th>Fungsi &amp; Input</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+      <tbody id="suite-body"></tbody>
+    </table></div>
+  </section>
+
+  <section class="panel" id="defect">
+    <h2>Defect &amp; Regression Testing — BUG-01</h2>
+    <div class="notice">Demonstrasi defect memakai fungsi varian yang salah, <b>validasi_jumlah_bug</b>, yang batas atasnya tertulis ≤ 11 padahal REQ-02 menetapkan ≤ 10. Test <i>test_11_harus_ditolak</i> memeriksa bahwa jumlah 11 harus ditolak; pada fungsi bug test ini FAIL — bukti bahwa test mampu mendeteksi defect. Setelah batas diperbaiki menjadi ≤ 10, test yang sama PASS dan seluruh 28 test utama dijalankan ulang sebagai regression test.</div>
+    <div class="actions">
+      <button class="danger" onclick="runDefect()">1 · Jalankan Test pada Fungsi Bug</button>
+      <button onclick="runFix()">2 · Terapkan Perbaikan + Regression</button>
+    </div>
+    <div class="hasil" id="defect-hasil">Belum dijalankan.</div>
+  </section>
+
+  <div class="footer">
+    Lab Unit Testing TokoPolines — Praktikum Pertemuan 10, Mata Kuliah Uji Produk IT.<br>
+    Pendamping notebook Python: Unit_Testing_TokoPolines.ipynb (Google Colab) · Hasil web (JavaScript) setara hasil eksekusi Python unittest.<br>
+    Cezar Nareswara R · 43324205
   </div>
-  <div id="logStatus">Status awal: Menunggu Pembayaran.</div>
-  <table>
-    <tr><th>Dari status</th><th>Aksi</th><th>Ke status</th><th>Keterangan</th><th>Hasil uji</th></tr>
-    <tbody id="st-body"></tbody>
-  </table>
-</section>
-
-<section id="runner">
-  <h2>Runner — 28 Test Utama + 6 Test Tambahan</h2>
-  <p class="desc">Seluruh test case praktikum dijalankan terhadap fungsi di halaman ini. Hasilnya setara dengan eksekusi Python <i>unittest</i> pada notebook pendamping: 28 test utama (TC-01 s.d. TC-28) dan 6 test tambahan (TB-01 s.d. TB-06).</p>
-  <div class="summary">
-    <span class="chip">Total: <b id="sum-total">–</b></span>
-    <span class="chip">PASS: <b id="sum-pass">–</b></span>
-    <span class="chip">FAIL: <b id="sum-fail">–</b></span>
-    <span class="chip">ERROR: <b id="sum-error">–</b></span>
-  </div>
-  <button class="btn" onclick="runSuite()">Jalankan Semua Test</button>
-  <table>
-    <tr><th>ID</th><th>REQ</th><th>Fungsi &amp; Input</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
-    <tbody id="suite-body"></tbody>
-  </table>
-</section>
-
-<section id="defect">
-  <h2>Defect &amp; Regression Testing (BUG-01)</h2>
-  <p class="desc">Demonstrasi defect memakai fungsi varian yang salah, <b>validasi_jumlah_bug</b>, yang batas atasnya tertulis ≤ 11 padahal REQ-02 menetapkan ≤ 10. Test <i>test_11_harus_ditolak</i> memeriksa bahwa jumlah 11 harus ditolak; pada fungsi bug test ini FAIL — bukti bahwa test mampu mendeteksi defect. Setelah batas diperbaiki menjadi ≤ 10, test yang sama PASS dan seluruh 28 test utama dijalankan ulang sebagai regression test.</p>
-  <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button class="btn bad" onclick="runDefect()">1 · Jalankan Test pada Fungsi Bug</button>
-    <button class="btn" onclick="runFix()">2 · Terapkan Perbaikan + Regression</button>
-  </div>
-  <div class="hasil" id="defect-hasil" style="margin-top:12px">Belum dijalankan.</div>
-</section>
-
 </main>
-<footer>
-  Lab Unit Testing TokoPolines — Praktikum Pertemuan 10, Uji Produk IT.<br>
-  Pendamping notebook Python: <i>Unit_Testing_TokoPolines.ipynb</i> (Google Colab). Hasil web (JavaScript) setara hasil eksekusi Python unittest.<br>
-  Cezar Nareswara R · 43324205
-</footer>
 
 <script>
 /* ============ LOGIKA BISNIS (setara fungsi Python pada modul) ============ */
@@ -352,7 +363,6 @@ if(typeof module !== "undefined" && module.exports){
   module.exports = { validasi_jumlah, validasi_jumlah_bug, hitung_subtotal, hitung_diskon, validasi_checkout, transisi, runSuiteLogic, EP_ROWS, BVA_ROWS, DT_ROWS, dtExpected, dtExec, ST_ROWS, ujiSatuTransisi, jalankan, fmt };
 }
 </script>
-
 <script>
 /* ============ BAGIAN TAMPILAN (browser) ============ */
 function badge(st){
