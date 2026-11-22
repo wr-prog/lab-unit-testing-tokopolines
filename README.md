@@ -1,20 +1,23 @@
-# TokoPolines — Website & Unit Testing
+# GGTopUp — Website Top Up Game & Unit Testing
 
 Praktikum Pertemuan 10 · Mata Kuliah Uji Produk IT
 Cezar Nareswara R — 43324205
 
-Repo ini berisi website **TokoPolines** (objek yang diuji) beserta notebook
-unit test-nya untuk studi kasus marketplace TokoPolines.
+Repo ini berisi website **GGTopUp** (aplikasi pendamping yang dibangun sendiri
+sebagai objek uji) beserta notebook unit test untuk studi kasus TokoPolines.
 
-## 1. Website TokoPolines (`index.html`)
+## 1. Website GGTopUp (`index.html`)
 
-Marketplace simulasi yang benar-benar berjalan di browser (satu file HTML,
-tanpa dependensi server; data tersimpan di localStorage):
+Toko top up game online simulasi yang benar-benar berjalan di browser (satu
+file HTML, tanpa dependensi server; data tersimpan di localStorage):
 
-- **Katalog** — 8 produk dengan pencarian dan filter kategori.
+- **Katalog** — 8 produk top up (diamond Mobile Legends, UC PUBG Mobile,
+  diamond Free Fire, Genesis Crystal Genshin Impact, Valorant Points, Steam
+  Wallet, gift card Roblox dan PlayStation) dengan pencarian dan filter.
 - **Login** — akun simulasi `mahasiswa@tokopolines.test` / `Polines123!` (REQ-01).
 - **Keranjang** — jumlah pembelian divalidasi: bilangan bulat 1–10 dan tidak
-  melebihi stok (REQ-02); subtotal = harga × jumlah (REQ-03).
+  melebihi stok (REQ-02); subtotal = harga × jumlah (REQ-03). Tersedia field
+  ID Pemain sebagai tujuan pengiriman item.
 - **Voucher POLINES10** — diskon 10% hanya bila sudah login, subtotal
   ≥ Rp100.000, dan kode valid (REQ-04).
 - **Checkout** — ditolak bila keranjang kosong (REQ-05).
@@ -44,17 +47,18 @@ dan **Boundary Value Analysis** untuk aturan jumlah (REQ-02), **Decision
 Table** untuk kombinasi syarat voucher (REQ-04), dan **State Transition**
 untuk status pesanan (REQ-06).
 
-## Sumber Foto Produk
+## Sumber Gambar Produk
 
-Seluruh foto pada etalase adalah **foto asli barang** (bukan hasil generate AI),
-diambil dari halaman produk/manufaktur berikut dan disematkan ke dalam file
+Seluruh gambar pada etalase adalah **gambar asli produk game** (kartu voucher,
+banner resmi, dan tangkapan layar dalam game — bukan hasil generate AI),
+diambil dari halaman produk/penerbit berikut dan disematkan ke dalam file
 `index.html` (diperkecil seperlunya):
 
-- Flashdisk 32 GB — foto produk penjual di made-in-china.com
-- Mouse Wireless — foto produk di Amazon (m.media-amazon.com)
-- Buku Catatan — foto produk di walmart.com
-- Pulpen Gel — foto produk manufaktur Deli (deliworld.com)
-- Kaos Kampus — foto produk penjual di indiamart.com
-- Botol Minum — foto produk melalui Cloudinary Zerocater
-- Headset Kabel — foto produk penjual di eBay (i.ebayimg.com)
-- Tas Laptop — foto produk penjual di AliExpress (ae01.alicdn.com)
+- Mobile Legends — 172 Diamond: banner top up kazukiofficialstore.com
+- PUBG Mobile — 120 UC: gambar kartu produk arektastore (Netlify)
+- Free Fire — 70 Diamond: ilustrasi top up dari blog (Googleusercontent)
+- Genshin Impact — 60 Genesis Crystal: tangkapan layar toko dalam game via bittopup.com
+- Valorant — 475 Points: gambar kartu produk jumbosouq.com
+- Steam Wallet — 25.000 IDR: gambar kartu produk kinguin.net
+- Roblox — Gift Card 10.000 Robux: foto produk di Amazon (m.media-amazon.com)
+- PlayStation Store — Gift Card $100: gambar kartu produk giftncode.com
