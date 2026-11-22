@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Unit Testing TokoPolines — EP, BVA, Decision Table, State Transition</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#16213a; --line:#334155;
+    --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8; --accent2:#fbbf24;
+    --ok:#22c55e; --bad:#ef4444; --warn:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+  header{background:linear-gradient(135deg,#0ea5e9,#1d4ed8);padding:34px 20px 26px;text-align:center}
+  header h1{margin:0 0 6px;font-size:1.9rem}
+  header p{margin:2px 0;color:#e0f2fe}
+  nav{position:sticky;top:0;background:#0b1220ee;backdrop-filter:blur(6px);padding:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;z-index:10;border-bottom:1px solid var(--line)}
+  nav a{color:var(--text);text-decoration:none;background:var(--panel);padding:6px 14px;border-radius:999px;font-size:.9rem;border:1px solid var(--line)}
+  nav a:hover{border-color:var(--accent);color:var(--accent)}
+  main{max-width:1080px;margin:0 auto;padding:24px 16px 60px}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:22px}
+  h2{margin-top:0;color:var(--accent);font-size:1.3rem}
+  h3{color:var(--accent2);margin-bottom:6px}
+  p.desc{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.92rem}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--accent)}
+  code,pre{font-family:Consolas,'Courier New',monospace}
+  pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto;font-size:.85rem;color:#a5f3fc}
+  .btn{background:var(--accent);color:#082f49;border:none;padding:9px 18px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.92rem}
+  .btn:hover{filter:brightness(1.1)}
+  .btn.warn{background:var(--warn);color:#451a03}
+  .btn.bad{background:var(--bad);color:#fff}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+  .badge{display:inline-block;padding:1px 10px;border-radius:999px;font-weight:700;font-size:.8rem}
+  .pass{background:#14532d;color:#86efac}
+  .fail{background:#7f1d1d;color:#fca5a5}
+  .belum{background:#334155;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .card h4{margin:0 0 6px;color:var(--accent)}
+  .card p{margin:4px 0;color:var(--muted);font-size:.9rem}
+  input,select{background:#0b1220;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:.92rem;width:100%}
+  label{font-size:.85rem;color:var(--muted);display:block;margin:8px 0 3px}
+  .hasil{margin-top:10px;background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-family:Consolas,monospace;font-size:.9rem;min-height:38px}
+  .summary{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .chip{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-weight:700}
+  .chip b{color:var(--accent)}
+  .statebox{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+  .state{padding:8px 14px;border-radius:10px;border:2px solid var(--line);background:var(--panel2);font-weight:600;font-size:.9rem}
+  .state.aktif{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 3px #38bdf833}
+  .state.final{border-color:var(--ok);color:#86efac}
+  .arrow{color:var(--muted)}
+  #logStatus{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:12px;font-family:Consolas,monospace;font-size:.85rem;max-height:220px;overflow-y:auto;white-space:pre-wrap}
+  footer{text-align:center;color:var(--muted);padding:26px;font-size:.88rem}
+  .rowfail td{background:#7f1d1d33}
+  .rowpass td{background:#14532d22}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lab Unit Testing — TokoPolines</h1>
+  <p>Praktikum Pertemuan 10 · Mata Kuliah Uji Produk IT</p>
+  <p>Equivalence Partitioning · Boundary Value Analysis · Decision Table · State Transition</p>
+  <p style="font-size:.9rem">Cezar Nareswara R — 43324205</p>
+</header>
+<nav>
+  <a href="#fungsi">Fungsi Bisnis</a>
+  <a href="#ep">1 · Equivalence Partitioning</a>
+  <a href="#bva">2 · Boundary Value Analysis</a>
+  <a href="#dt">3 · Decision Table</a>
+  <a href="#st">4 · State Transition</a>
+  <a href="#runner">Runner 34 Test</a>
+  <a href="#defect">Defect &amp; Regression</a>
+</nav>
+<main>
+
+<section id="fungsi">
+  <h2>Fungsi Bisnis yang Diuji (System Under Test)</h2>
+  <p class="desc">Empat fungsi logika bisnis TokoPolines diimplementasikan di halaman ini (JavaScript, setara fungsi Python pada modul) dan menjadi objek seluruh pengujian di bawah. Aturan acuan: REQ-02 jumlah integer 1–10 dan tidak melebihi stok; REQ-03 subtotal = harga × jumlah, nilai negatif memicu ValueError; REQ-04 voucher POLINES10 memberi diskon 10% hanya bila login, subtotal ≥ Rp100.000, dan kode valid; REQ-05 checkout ditolak bila keranjang kosong.</p>
+  <pre>function validasi_jumlah(jumlah, stok)   // REQ-02
+function hitung_subtotal(harga, jumlah)  // REQ-03, melempar ValueError
+function hitung_diskon(subtotal, login, voucher) // REQ-04
+function validasi_checkout(keranjang)    // REQ-05</pre>
+  <div class="grid">
+    <div class="card">
+      <h4>validasi_jumlah(jumlah, stok)</h4>
+      <label>Jumlah (coba: 5, 0, 11, 2.5, True)</label><input id="pj-jumlah" value="5">
+      <label>Stok</label><input id="pj-stok" value="15">
+      <p></p><button class="btn" onclick="cobaJumlah()">Uji</button>
+      <div class="hasil" id="pj-hasil">—</div>
+    </div>
+    <div class="card">
+      <h4>hitung_subtotal(harga, jumlah)</h4>
+      <label>Harga</label><input id="ps-harga" value="50000">
+      <label>Jumlah</label><input id="ps-jumlah" value="5">
+      <p></p><button class="btn" onclick="cobaSubtotal()">Uji</button>
+      <div class="hasil" id="ps-hasil">—</div>
+    </div>
+    <div class="card">
+      <h4>hitung_diskon(subtotal, login, voucher)</h4>
+      <label>Subtotal</label><input id="pd-subtotal" value="250000">
+      <label>Login</label><select id="pd-login"><option value="true">True (sudah login)</option><option value="false">False (belum login)</option></select>
+      <label>Kode voucher</label><input id="pd-voucher" value="POLINES10">
+      <p></p><button class="btn" onclick="cobaDiskon()">Uji</button>
+      <div class="hasil" id="pd-hasil">—</div>
+    </div>
+    <div class="card">
+      <h4>validasi_checkout(keranjang)</h4>
+      <label>Isi keranjang, pisahkan koma (kosongkan = keranjang kosong; tulis None untuk None)</label><input id="pc-isi" value="Laptop, Mouse">
+      <p></p><button class="btn" onclick="cobaCheckout()">Uji</button>
+      <div class="hasil" id="pc-hasil">—</div>
+    </div>
+  </div>
+</section>
+
+<section id="ep">
+  <h2>1 · Equivalence Partitioning (EP)</h2>
+  <p class="desc">EP membagi ruang input menjadi kelompok (partisi) yang diharapkan berperilaku sama, lalu cukup menguji satu wakil dari tiap kelompok. Untuk <b>validasi_jumlah</b> dengan stok 15 terdapat lima partisi: satu partisi valid dan empat partisi tidak valid. Menjalankan kelima wakil di bawah membuktikan kelima kelompok berperilaku sesuai spesifikasi tanpa harus menguji semua angka.</p>
+  <table>
+    <tr><th>Partisi</th><th>Keterangan</th><th>Wakil</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+    <tbody id="ep-body"></tbody>
+  </table>
+  <button class="btn" onclick="runEP()">Jalankan Pengujian EP</button>
+  <span id="ep-ringkas" style="margin-left:10px"></span>
+</section>
+
+<section id="bva">
+  <h2>2 · Boundary Value Analysis (BVA)</h2>
+  <p class="desc">BVA menguji tepat di perbatasan rentang, karena kesalahan paling sering bersembunyi di batas (kesalahan <i>off-by-one</i>, misalnya menulis ≤ 11 padahal seharusnya ≤ 10). Rentang jumlah yang sah adalah 1–10, sehingga nilai yang diuji adalah 0, 1, 2 dan 9, 10, 11. Batas stok juga diuji: jumlah 5 dengan stok 5 (tepat habis) dan jumlah 6 dengan stok 5 (satu di atas stok).</p>
+  <table>
+    <tr><th>Jumlah</th><th>Stok</th><th>Posisi terhadap batas</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+    <tbody id="bva-body"></tbody>
+  </table>
+  <button class="btn" onclick="runBVA()">Jalankan Pengujian BVA</button>
+  <span id="bva-ringkas" style="margin-left:10px"></span>
+</section>
+
+<section id="dt">
+  <h2>3 · Decision Table — Voucher POLINES10</h2>
+  <p class="desc">Diskon ditentukan oleh kombinasi tiga syarat: <b>L</b> = sudah login, <b>S</b> = subtotal ≥ Rp100.000, <b>V</b> = voucher valid (POLINES10). Hanya satu dari delapan kombinasi yang menghasilkan diskon 10%; tujuh kombinasi lain menghasilkan 0. Pada tabel yang dapat dijalankan ini, S = Ya diwakili subtotal Rp250.000 dan S = Tidak diwakili subtotal Rp50.000; V = Tidak diwakili kode SALAH10.</p>
+  <table>
+    <tr><th>L (login)</th><th>S (subtotal ≥ 100rb)</th><th>V (voucher valid)</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+    <tbody id="dt-body"></tbody>
+  </table>
+  <button class="btn" onclick="runDT()">Jalankan Decision Table</button>
+  <span id="dt-ringkas" style="margin-left:10px"></span>
+</section>
+
+<section id="st">
+  <h2>4 · State Transition — Status Pesanan</h2>
+  <p class="desc">Status pesanan adalah mesin status: Menunggu Pembayaran → Diproses → Dikirim → Selesai, dengan cabang Batalkan yang hanya sah dari Menunggu Pembayaran. Transisi di luar jalur tersebut harus ditolak. Coba sendiri: tekan tombol aksi dan perhatikan transisi mana yang diterima dan mana yang ditolak, atau jalankan pengujian seluruh transisi sekaligus.</p>
+  <div class="statebox" id="st-visual"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
+    <button class="btn" onclick="aksiStatus('Bayar')">Bayar</button>
+    <button class="btn" onclick="aksiStatus('Kirim')">Kirim</button>
+    <button class="btn" onclick="aksiStatus('Terima')">Terima</button>
+    <button class="btn warn" onclick="aksiStatus('Batalkan')">Batalkan</button>
+    <button class="btn ghost" onclick="resetStatus()">Reset Pesanan</button>
+    <button class="btn" onclick="runST()">Uji Semua Transisi</button>
+  </div>
+  <div id="logStatus">Status awal: Menunggu Pembayaran.</div>
+  <table>
+    <tr><th>Dari status</th><th>Aksi</th><th>Ke status</th><th>Keterangan</th><th>Hasil uji</th></tr>
+    <tbody id="st-body"></tbody>
+  </table>
+</section>
+
+<section id="runner">
+  <h2>Runner — 28 Test Utama + 6 Test Tambahan</h2>
+  <p class="desc">Seluruh test case praktikum dijalankan terhadap fungsi di halaman ini. Hasilnya setara dengan eksekusi Python <i>unittest</i> pada notebook pendamping: 28 test utama (TC-01 s.d. TC-28) dan 6 test tambahan (TB-01 s.d. TB-06).</p>
+  <div class="summary">
+    <span class="chip">Total: <b id="sum-total">–</b></span>
+    <span class="chip">PASS: <b id="sum-pass">–</b></span>
+    <span class="chip">FAIL: <b id="sum-fail">–</b></span>
+    <span class="chip">ERROR: <b id="sum-error">–</b></span>
+  </div>
+  <button class="btn" onclick="runSuite()">Jalankan Semua Test</button>
+  <table>
+    <tr><th>ID</th><th>REQ</th><th>Fungsi &amp; Input</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+    <tbody id="suite-body"></tbody>
+  </table>
+</section>
+
+<section id="defect">
+  <h2>Defect &amp; Regression Testing (BUG-01)</h2>
+  <p class="desc">Demonstrasi defect memakai fungsi varian yang salah, <b>validasi_jumlah_bug</b>, yang batas atasnya tertulis ≤ 11 padahal REQ-02 menetapkan ≤ 10. Test <i>test_11_harus_ditolak</i> memeriksa bahwa jumlah 11 harus ditolak; pada fungsi bug test ini FAIL — bukti bahwa test mampu mendeteksi defect. Setelah batas diperbaiki menjadi ≤ 10, test yang sama PASS dan seluruh 28 test utama dijalankan ulang sebagai regression test.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn bad" onclick="runDefect()">1 · Jalankan Test pada Fungsi Bug</button>
+    <button class="btn" onclick="runFix()">2 · Terapkan Perbaikan + Regression</button>
+  </div>
+  <div class="hasil" id="defect-hasil" style="margin-top:12px">Belum dijalankan.</div>
+</section>
+
+</main>
+<footer>
+  Lab Unit Testing TokoPolines — Praktikum Pertemuan 10, Uji Produk IT.<br>
+  Pendamping notebook Python: <i>Unit_Testing_TokoPolines.ipynb</i> (Google Colab). Hasil web (JavaScript) setara hasil eksekusi Python unittest.<br>
+  Cezar Nareswara R · 43324205
+</footer>
+
+<script>
+/* ============ LOGIKA BISNIS (setara fungsi Python pada modul) ============ */
+function isIntPy(x){ return typeof x === 'number' && Number.isInteger(x); }
+
+function validasi_jumlah(jumlah, stok){
+  return isIntPy(jumlah) && isIntPy(stok) && stok >= 0 &&
+         jumlah >= 1 && jumlah <= 10 && jumlah <= stok;
+}
+function validasi_jumlah_bug(jumlah, stok){ // BUG-01: batas atas <= 11
+  return isIntPy(jumlah) && isIntPy(stok) && stok >= 0 &&
+         jumlah >= 1 && jumlah <= 11 && jumlah <= stok;
+}
+function ValueError(msg){ const e = new Error(msg); e.ve = true; return e; }
+function hitung_subtotal(harga, jumlah){
+  if(!isIntPy(harga) || !isIntPy(jumlah) || harga < 0 || jumlah < 0)
+    throw ValueError("Harga dan jumlah harus integer nonnegatif");
+  return harga * jumlah;
+}
+function hitung_diskon(subtotal, login, voucher){
+  if(!isIntPy(subtotal) || subtotal < 0)
+    throw ValueError("Subtotal harus integer nonnegatif");
+  if(login === true && subtotal >= 100000 && voucher === "POLINES10")
+    return Math.floor(subtotal / 10);
+  return 0;
+}
+function validasi_checkout(keranjang){
+  return Array.isArray(keranjang) && keranjang.length > 0;
+}
+
+/* ============ STATE TRANSITION: status pesanan ============ */
+const TRANSISI = {
+  "Menunggu Pembayaran": { "Bayar": "Diproses", "Batalkan": "Dibatalkan" },
+  "Diproses":            { "Kirim": "Dikirim" },
+  "Dikirim":             { "Terima": "Selesai" },
+  "Selesai":             {},
+  "Dibatalkan":          {}
+};
+function transisi(status, aksi){
+  const tujuan = (TRANSISI[status] || {})[aksi];
+  if(tujuan) return { ok:true, baru:tujuan, pesan:"Transisi diterima: " + status + " -> " + tujuan + "." };
+  return { ok:false, baru:status, pesan:"Transisi ditolak: " + status + " -> " + aksi + "." };
+}
+
+/* ============ FORMAT & EKSEKUSI TEST ============ */
+function fmt(v){
+  if(v === true) return "True";
+  if(v === false) return "False";
+  if(v === null || v === undefined) return "None";
+  if(Array.isArray(v)) return "[" + v.join(", ") + "]";
+  return String(v);
+}
+function jalankan(exec, expected){
+  try{
+    const val = exec();
+    const act = fmt(val);
+    return { actual: act, status: (act === expected) ? "PASS" : "FAIL" };
+  }catch(e){
+    if(e && e.ve) return { actual:"ValueError", status: (expected === "ValueError") ? "PASS" : "FAIL" };
+    return { actual:"Error: " + e.message, status:"ERROR" };
+  }
+}
+
+/* ============ DATA TEST ============ */
+const TESTS = [
+  // TestJumlah — REQ-02
+  {id:"TC-01",req:"REQ-02",label:"validasi_jumlah(1, 15)",expected:"True",exec:()=>validasi_jumlah(1,15)},
+  {id:"TC-02",req:"REQ-02",label:"validasi_jumlah(5, 15)",expected:"True",exec:()=>validasi_jumlah(5,15)},
+  {id:"TC-03",req:"REQ-02",label:"validasi_jumlah(10, 15)",expected:"True",exec:()=>validasi_jumlah(10,15)},
+  {id:"TC-04",req:"REQ-02",label:"validasi_jumlah(0, 15)",expected:"False",exec:()=>validasi_jumlah(0,15)},
+  {id:"TC-05",req:"REQ-02",label:"validasi_jumlah(11, 15)",expected:"False",exec:()=>validasi_jumlah(11,15)},
+  {id:"TC-06",req:"REQ-02",label:"validasi_jumlah(8, 5)",expected:"False",exec:()=>validasi_jumlah(8,5)},
+  {id:"TC-07",req:"REQ-02",label:"validasi_jumlah(2.5, 15)",expected:"False",exec:()=>validasi_jumlah(2.5,15)},
+  {id:"TC-08",req:"REQ-02",label:"validasi_jumlah(-1, 15)",expected:"False",exec:()=>validasi_jumlah(-1,15)},
+  {id:"TC-09",req:"REQ-02",label:"validasi_jumlah(True, 15)",expected:"False",exec:()=>validasi_jumlah(true,15)},
+  {id:"TC-10",req:"REQ-02",label:"validasi_jumlah(1, -1)",expected:"False",exec:()=>validasi_jumlah(1,-1)},
+  // TestSubtotal — REQ-03
+  {id:"TC-11",req:"REQ-03",label:"hitung_subtotal(50000, 1)",expected:"50000",exec:()=>hitung_subtotal(50000,1)},
+  {id:"TC-12",req:"REQ-03",label:"hitung_subtotal(50000, 5)",expected:"250000",exec:()=>hitung_subtotal(50000,5)},
+  {id:"TC-13",req:"REQ-03",label:"hitung_subtotal(50000, 10)",expected:"500000",exec:()=>hitung_subtotal(50000,10)},
+  {id:"TC-14",req:"REQ-03",label:"hitung_subtotal(50000, 0)",expected:"0",exec:()=>hitung_subtotal(50000,0)},
+  {id:"TC-15",req:"REQ-03",label:"hitung_subtotal(-50000, 5)",expected:"ValueError",exec:()=>hitung_subtotal(-50000,5)},
+  {id:"TC-16",req:"REQ-03",label:"hitung_subtotal(50000, -1)",expected:"ValueError",exec:()=>hitung_subtotal(50000,-1)},
+  // TestDiskon — REQ-04
+  {id:"TC-17",req:"REQ-04",label:"hitung_diskon(250000, True, POLINES10)",expected:"25000",exec:()=>hitung_diskon(250000,true,"POLINES10")},
+  {id:"TC-18",req:"REQ-04",label:"hitung_diskon(100000, True, POLINES10)",expected:"10000",exec:()=>hitung_diskon(100000,true,"POLINES10")},
+  {id:"TC-19",req:"REQ-04",label:"hitung_diskon(250000, False, POLINES10)",expected:"0",exec:()=>hitung_diskon(250000,false,"POLINES10")},
+  {id:"TC-20",req:"REQ-04",label:"hitung_diskon(99999, True, POLINES10)",expected:"0",exec:()=>hitung_diskon(99999,true,"POLINES10")},
+  {id:"TC-21",req:"REQ-04",label:"hitung_diskon(250000, True, SALAH10)",expected:"0",exec:()=>hitung_diskon(250000,true,"SALAH10")},
+  {id:"TC-22",req:"REQ-04",label:"hitung_diskon(250000, True, kosong)",expected:"0",exec:()=>hitung_diskon(250000,true,"")},
+  {id:"TC-23",req:"REQ-04",label:"hitung_diskon(-1, True, POLINES10)",expected:"ValueError",exec:()=>hitung_diskon(-1,true,"POLINES10")},
+  // TestCheckout — REQ-05
+  {id:"TC-24",req:"REQ-05",label:"validasi_checkout([Laptop])",expected:"True",exec:()=>validasi_checkout(["Laptop"])},
+  {id:"TC-25",req:"REQ-05",label:"validasi_checkout([Laptop, Mouse])",expected:"True",exec:()=>validasi_checkout(["Laptop","Mouse"])},
+  {id:"TC-26",req:"REQ-05",label:"validasi_checkout([])",expected:"False",exec:()=>validasi_checkout([])},
+  {id:"TC-27",req:"REQ-05",label:"validasi_checkout(None)",expected:"False",exec:()=>validasi_checkout(null)},
+  {id:"TC-28",req:"REQ-05",label:"validasi_checkout(\"Laptop\")",expected:"False",exec:()=>validasi_checkout("Laptop")},
+  // Test tambahan
+  {id:"TB-01",req:"REQ-02",label:"validasi_jumlah(5, 5) — BVA stok",expected:"True",exec:()=>validasi_jumlah(5,5)},
+  {id:"TB-02",req:"REQ-02",label:"validasi_jumlah(6, 5) — BVA stok",expected:"False",exec:()=>validasi_jumlah(6,5)},
+  {id:"TB-03",req:"REQ-02",label:"validasi_jumlah(True, 15) — EP tipe",expected:"False",exec:()=>validasi_jumlah(true,15)},
+  {id:"TB-04",req:"REQ-04",label:"hitung_diskon(100000, True, POLINES10) — BVA subtotal",expected:"10000",exec:()=>hitung_diskon(100000,true,"POLINES10")},
+  {id:"TB-05",req:"REQ-04",label:"hitung_diskon(250000, True, SALAH10) — Decision table",expected:"0",exec:()=>hitung_diskon(250000,true,"SALAH10")},
+  {id:"TB-06",req:"REQ-03",label:"hitung_subtotal(-1, 2) — Negative",expected:"ValueError",exec:()=>hitung_subtotal(-1,2)}
+];
+const EP_ROWS = [
+  {partisi:"Valid: integer 1–10 dan tidak melebihi stok", wakil:"jumlah 5, stok 15", expected:"True", exec:()=>validasi_jumlah(5,15)},
+  {partisi:"Tidak valid: jumlah ≤ 0", wakil:"jumlah 0, stok 15", expected:"False", exec:()=>validasi_jumlah(0,15)},
+  {partisi:"Tidak valid: jumlah ≥ 11", wakil:"jumlah 11, stok 15", expected:"False", exec:()=>validasi_jumlah(11,15)},
+  {partisi:"Tidak valid: jumlah melebihi stok", wakil:"jumlah 8, stok 5", expected:"False", exec:()=>validasi_jumlah(8,5)},
+  {partisi:"Tidak valid: tipe bukan integer", wakil:"jumlah 2.5, stok 15", expected:"False", exec:()=>validasi_jumlah(2.5,15)}
+];
+const BVA_ROWS = [
+  {j:0, s:15, posisi:"satu di bawah batas bawah (1)", expected:"False"},
+  {j:1, s:15, posisi:"tepat di batas bawah", expected:"True"},
+  {j:2, s:15, posisi:"satu di atas batas bawah", expected:"True"},
+  {j:9, s:15, posisi:"satu di bawah batas atas (10)", expected:"True"},
+  {j:10, s:15, posisi:"tepat di batas atas", expected:"True"},
+  {j:11, s:15, posisi:"satu di atas batas atas", expected:"False"},
+  {j:5, s:5, posisi:"jumlah tepat sama dengan stok", expected:"True"},
+  {j:6, s:5, posisi:"satu di atas stok", expected:"False"}
+];
+const DT_ROWS = [
+  [true,true,true],[true,true,false],[true,false,true],[true,false,false],
+  [false,true,true],[false,true,false],[false,false,true],[false,false,false]
+];
+function dtExpected(L,S,V){ return (L&&S&&V) ? "25000" : "0"; }
+function dtExec(L,S,V){ return hitung_diskon(S?250000:50000, L, V?"POLINES10":"SALAH10"); }
+const ST_ROWS = [
+  {dari:"Menunggu Pembayaran", aksi:"Bayar", ke:"Diproses", ket:"transisi sah", sah:true},
+  {dari:"Menunggu Pembayaran", aksi:"Batalkan", ke:"Dibatalkan", ket:"transisi sah (satu-satunya jalur Batalkan)", sah:true},
+  {dari:"Diproses", aksi:"Kirim", ke:"Dikirim", ket:"transisi sah", sah:true},
+  {dari:"Dikirim", aksi:"Terima", ke:"Selesai", ket:"transisi sah", sah:true},
+  {dari:"Menunggu Pembayaran", aksi:"Kirim", ke:"—", ket:"ditolak: melompati Diproses", sah:false},
+  {dari:"Diproses", aksi:"Batalkan", ke:"—", ket:"ditolak: Batalkan hanya dari Menunggu Pembayaran", sah:false},
+  {dari:"Dikirim", aksi:"Batalkan", ke:"—", ket:"ditolak: Batalkan hanya dari Menunggu Pembayaran", sah:false},
+  {dari:"Selesai", aksi:"Batalkan", ke:"—", ket:"ditolak: status akhir tidak dapat dibatalkan", sah:false}
+];
+const JALUR = { "Menunggu Pembayaran":[], "Diproses":["Bayar"], "Dikirim":["Bayar","Kirim"], "Selesai":["Bayar","Kirim","Terima"], "Dibatalkan":["Batalkan"] };
+function ujiSatuTransisi(row){
+  let status = "Menunggu Pembayaran";
+  for(const a of JALUR[row.dari]) status = transisi(status, a).baru;
+  const r = transisi(status, row.aksi);
+  if(row.sah) return (r.ok && r.baru === row.ke) ? "PASS" : "FAIL";
+  return (!r.ok) ? "PASS" : "FAIL";
+}
+function runSuiteLogic(){
+  return TESTS.map(t => { const r = jalankan(t.exec, t.expected); return { id:t.id, req:t.req, label:t.label, expected:t.expected, actual:r.actual, status:r.status }; });
+}
+if(typeof module !== "undefined" && module.exports){
+  module.exports = { validasi_jumlah, validasi_jumlah_bug, hitung_subtotal, hitung_diskon, validasi_checkout, transisi, runSuiteLogic, EP_ROWS, BVA_ROWS, DT_ROWS, dtExpected, dtExec, ST_ROWS, ujiSatuTransisi, jalankan, fmt };
+}
+</script>
+
+<script>
+/* ============ BAGIAN TAMPILAN (browser) ============ */
+function badge(st){
+  if(st === "PASS") return '<span class="badge pass">PASS</span>';
+  if(st === "FAIL") return '<span class="badge fail">FAIL</span>';
+  if(st === "ERROR") return '<span class="badge fail">ERROR</span>';
+  return '<span class="badge belum">belum dijalankan</span>';
+}
+function parseNilai(s){
+  s = String(s).trim();
+  if(s === "True") return true;
+  if(s === "False") return false;
+  if(s === "None") return null;
+  if(/^-?\d+$/.test(s)) return parseInt(s, 10);
+  if(/^-?\d*\.\d+$/.test(s)) return parseFloat(s);
+  return s;
+}
+function tampilHasil(el, teks){ document.getElementById(el).textContent = teks; }
+
+/* --- Playground --- */
+function cobaJumlah(){
+  const j = parseNilai(document.getElementById("pj-jumlah").value);
+  const s = parseNilai(document.getElementById("pj-stok").value);
+  tampilHasil("pj-hasil", "validasi_jumlah(" + fmt(j) + ", " + fmt(s) + ") = " + fmt(validasi_jumlah(j, s)));
+}
+function cobaSubtotal(){
+  const h = parseNilai(document.getElementById("ps-harga").value);
+  const j = parseNilai(document.getElementById("ps-jumlah").value);
+  try{ tampilHasil("ps-hasil", "hitung_subtotal(" + fmt(h) + ", " + fmt(j) + ") = " + fmt(hitung_subtotal(h, j))); }
+  catch(e){ tampilHasil("ps-hasil", "hitung_subtotal(" + fmt(h) + ", " + fmt(j) + ") -> ValueError: " + e.message); }
+}
+function cobaDiskon(){
+  const st = parseNilai(document.getElementById("pd-subtotal").value);
+  const lg = document.getElementById("pd-login").value === "true";
+  const vc = document.getElementById("pd-voucher").value;
+  try{ tampilHasil("pd-hasil", "hitung_diskon(" + fmt(st) + ", " + fmt(lg) + ", \"" + vc + "\") = " + fmt(hitung_diskon(st, lg, vc))); }
+  catch(e){ tampilHasil("pd-hasil", "hitung_diskon(" + fmt(st) + ", ...) -> ValueError: " + e.message); }
+}
+function cobaCheckout(){
+  const raw = document.getElementById("pc-isi").value.trim();
+  let k;
+  if(raw === "") k = [];
+  else if(raw === "None") k = null;
+  else k = raw.split(",").map(x => x.trim()).filter(x => x !== "");
+  tampilHasil("pc-hasil", "validasi_checkout(" + fmt(k) + ") = " + fmt(validasi_checkout(k)));
+}
+
+/* --- EP --- */
+function renderEP(){
+  document.getElementById("ep-body").innerHTML = EP_ROWS.map((r,i) =>
+    "<tr><td>" + r.partisi + "</td><td>" + r.wakil + "</td><td>" + r.expected + "</td><td id='ep-a" + i + "'>–</td><td id='ep-s" + i + "'>" + badge("") + "</td></tr>").join("");
+}
+function runEP(){
+  let pass = 0;
+  EP_ROWS.forEach((r,i) => {
+    const h = jalankan(r.exec, r.expected);
+    document.getElementById("ep-a" + i).textContent = h.actual;
+    document.getElementById("ep-s" + i).innerHTML = badge(h.status);
+    if(h.status === "PASS") pass++;
+  });
+  document.getElementById("ep-ringkas").textContent = "Hasil: " + pass + " dari " + EP_ROWS.length + " partisi sesuai spesifikasi.";
+}
+
+/* --- BVA --- */
+function renderBVA(){
+  document.getElementById("bva-body").innerHTML = BVA_ROWS.map((r,i) =>
+    "<tr><td>" + r.j + "</td><td>" + r.s + "</td><td>" + r.posisi + "</td><td>" + r.expected + "</td><td id='bva-a" + i + "'>–</td><td id='bva-s" + i + "'>" + badge("") + "</td></tr>").join("");
+}
+function runBVA(){
+  let pass = 0;
+  BVA_ROWS.forEach((r,i) => {
+    const h = jalankan(() => validasi_jumlah(r.j, r.s), r.expected);
+    document.getElementById("bva-a" + i).textContent = h.actual;
+    document.getElementById("bva-s" + i).innerHTML = badge(h.status);
+    if(h.status === "PASS") pass++;
+  });
+  document.getElementById("bva-ringkas").textContent = "Hasil: " + pass + " dari " + BVA_ROWS.length + " nilai batas sesuai spesifikasi.";
+}
+
+/* --- Decision Table --- */
+function ya(b){ return b ? "Ya" : "Tidak"; }
+function renderDT(){
+  document.getElementById("dt-body").innerHTML = DT_ROWS.map((r,i) =>
+    "<tr><td>" + ya(r[0]) + "</td><td>" + ya(r[1]) + "</td><td>" + ya(r[2]) + "</td><td>" + dtExpected(r[0],r[1],r[2]) + "</td><td id='dt-a" + i + "'>–</td><td id='dt-s" + i + "'>" + badge("") + "</td></tr>").join("");
+}
+function runDT(){
+  let pass = 0;
+  DT_ROWS.forEach((r,i) => {
+    const exp = dtExpected(r[0],r[1],r[2]);
+    const h = jalankan(() => dtExec(r[0],r[1],r[2]), exp);
+    document.getElementById("dt-a" + i).textContent = h.actual;
+    document.getElementById("dt-s" + i).innerHTML = badge(h.status);
+    if(h.status === "PASS") pass++;
+  });
+  document.getElementById("dt-ringkas").textContent = "Hasil: " + pass + " dari 8 kombinasi sesuai tabel keputusan.";
+}
+
+/* --- State Transition --- */
+let statusKini = "Menunggu Pembayaran";
+const URUTAN = ["Menunggu Pembayaran","Diproses","Dikirim","Selesai","Dibatalkan"];
+function renderStatus(){
+  document.getElementById("st-visual").innerHTML = URUTAN.map((s,i) => {
+    const cls = "state" + (s === statusKini ? " aktif" : "") + ((s === "Selesai" || s === "Dibatalkan") ? " final" : "");
+    const panah = i < URUTAN.length - 1 ? '<span class="arrow">&rarr;</span>' : "";
+    return '<span class="' + cls + '">' + s + "</span>" + panah;
+  }).join("");
+}
+function logStatus(teks){
+  const el = document.getElementById("logStatus");
+  el.textContent += "\n" + teks;
+  el.scrollTop = el.scrollHeight;
+}
+function aksiStatus(aksi){
+  const r = transisi(statusKini, aksi);
+  if(r.ok){ statusKini = r.baru; logStatus("[" + aksi + "] " + r.pesan + " Status sekarang: " + statusKini + "."); }
+  else logStatus("[" + aksi + "] " + r.pesan + " Status tetap: " + statusKini + ".");
+  renderStatus();
+}
+function resetStatus(){
+  statusKini = "Menunggu Pembayaran";
+  document.getElementById("logStatus").textContent = "Status awal: Menunggu Pembayaran.";
+  renderStatus();
+}
+function renderST(){
+  document.getElementById("st-body").innerHTML = ST_ROWS.map((r,i) =>
+    "<tr><td>" + r.dari + "</td><td>" + r.aksi + "</td><td>" + r.ke + "</td><td>" + r.ket + "</td><td id='st-s" + i + "'>" + badge("") + "</td></tr>").join("");
+}
+function runST(){
+  let pass = 0;
+  ST_ROWS.forEach((r,i) => {
+    const st = ujiSatuTransisi(r);
+    document.getElementById("st-s" + i).innerHTML = badge(st);
+    if(st === "PASS") pass++;
+  });
+  logStatus("Pengujian transisi: " + pass + " dari " + ST_ROWS.length + " transisi berperilaku sesuai aturan.");
+}
+
+/* --- Runner suite --- */
+function renderSuite(){
+  document.getElementById("suite-body").innerHTML = TESTS.map((t,i) =>
+    "<tr id='row-" + t.id + "'><td>" + t.id + "</td><td>" + t.req + "</td><td>" + t.label + "</td><td>" + t.expected + "</td><td id='a-" + t.id + "'>–</td><td id='s-" + t.id + "'>" + badge("") + "</td></tr>").join("");
+}
+function runSuite(){
+  const hasil = runSuiteLogic();
+  let p = 0, f = 0, e = 0;
+  hasil.forEach(h => {
+    document.getElementById("a-" + h.id).textContent = h.actual;
+    document.getElementById("s-" + h.id).innerHTML = badge(h.status);
+    document.getElementById("row-" + h.id).className = h.status === "PASS" ? "rowpass" : "rowfail";
+    if(h.status === "PASS") p++; else if(h.status === "FAIL") f++; else e++;
+  });
+  document.getElementById("sum-total").textContent = hasil.length;
+  document.getElementById("sum-pass").textContent = p;
+  document.getElementById("sum-fail").textContent = f;
+  document.getElementById("sum-error").textContent = e;
+  return { total: hasil.length, pass: p, fail: f, error: e };
+}
+
+/* --- Defect & regression --- */
+function runDefect(){
+  const h = jalankan(() => validasi_jumlah_bug(11, 15), "False");
+  const el = document.getElementById("defect-hasil");
+  if(h.status === "FAIL"){
+    el.innerHTML = "test_11_harus_ditolak pada <b>validasi_jumlah_bug(11, 15)</b>: expected False, actual " + h.actual +
+      " &rarr; <b>FAIL</b>. AssertionError: True is not false. Defect BUG-01 terdeteksi: batas atas tertulis &le; 11, seharusnya &le; 10.";
+  } else {
+    el.textContent = "Di luar dugaan: test lulus pada fungsi bug.";
+  }
+}
+function runFix(){
+  const h = jalankan(() => validasi_jumlah(11, 15), "False");
+  const reg = runSuite();
+  const el = document.getElementById("defect-hasil");
+  el.innerHTML = "Setelah perbaikan (&le; 11 menjadi &le; 10): test_11_harus_ditolak pada <b>validasi_jumlah(11, 15)</b> &rarr; actual " + h.actual + ", status <b>" + h.status + "</b>. " +
+    "Regression test: " + reg.pass + " dari " + reg.total + " test PASS, " + reg.fail + " FAIL, " + reg.error + " ERROR — perbaikan tidak merusak perilaku lain.";
+}
+
+/* --- Inisialisasi --- */
+renderEP(); renderBVA(); renderDT(); renderST(); renderSuite(); renderStatus();
+</script>
+</body>
+</html>
