@@ -43,3 +43,18 @@ Perancangan kasus ujinya memakai empat teknik: **Equivalence Partitioning**
 dan **Boundary Value Analysis** untuk aturan jumlah (REQ-02), **Decision
 Table** untuk kombinasi syarat voucher (REQ-04), dan **State Transition**
 untuk status pesanan (REQ-06).
+
+## Sumber Foto Produk
+
+Seluruh foto pada etalase adalah **foto asli barang** (bukan hasil generate AI),
+diambil dari halaman produk/manufaktur berikut dan disematkan ke dalam file
+`index.html` (diperkecil seperlunya):
+
+- Flashdisk 32 GB — foto produk penjual di made-in-china.com
+- Mouse Wireless — foto produk di Amazon (m.media-amazon.com)
+- Buku Catatan — foto produk di walmart.com
+- Pulpen Gel — foto produk manufaktur Deli (deliworld.com)
+- Kaos Kampus — foto produk penjual di indiamart.com
+- Botol Minum — foto produk melalui Cloudinary Zerocater
+- Headset Kabel — foto produk penjual di eBay (i.ebayimg.com)
+- Tas Laptop — foto produk penjual di AliExpress (ae01.alicdn.com)
